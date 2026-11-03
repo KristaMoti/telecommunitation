@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # Виртуальный сервер для Ядра сети
+  core-network:
+    build: ./base
+    container_name: open5gs-core
+    networks:
+      telecom_net:
+        ipv4_address: 10.5.0.4   
+    command: tail -f /dev/null   
+
+  # Виртуальный компьютер для Вышки и Телефона 
+  ran-station:
+    build: ./base
+    container_name: ueransim
+    depends_on:
+      - core-network             
+    networks:
+      telecom_net:
+        ipv4_address: 10.5.0.20  
+    command: tail -f /dev/null
+
+networks:
+  telecom_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/24    
